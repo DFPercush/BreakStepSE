@@ -77,9 +77,14 @@
 	you're here because you want to write a simple little script to control something on your base or ship.
 	 Here's how you do it. Let's learn by example.
 </p>
-<p>Let's say we have a door that we want to monitor, and pressurize a room whenever it's activated. The first thing is to head back to the <a href="../">generator page</a> and select Door and Air Vent. Generate, copy, and paste into a programmable block. When you save and compile, you should see "Hello from init script!" in the programmable block's terminal. <a href="../report-issue/">No?</a> Now, you can start writing code.</p>
+<p>Let's say we have a door that we want to monitor, and pressurize a room whenever it's activated. The first thing is to head back to the <a href="../">generator page</a> and select Door and Air Vent. Generate, copy, and paste into a programmable block. When you save and compile, you should see "Hello from init script!" in the programmable block's terminal. <a href="../report-issue/">No?</a> </p>
+
 <p>
-	Say we've named our door "Air Lock Door". So how do we check it?
+	The next step is to pick a block where you want to write your program. I usually use button panels, since it can both store, and start, the program with one click. Programs can be written in the Custom Data of any block. So, slap down a button, go to its terminal, and open Custom Data. Now, we're ready to code.
+</p>
+
+<p>
+	Now, let's say we've named our door "Air Lock Door". So how do we check it?
 	Well, the first thing is, we need a way to refer to that thing in our code.
 	So we create a variable.
 </p>
@@ -159,9 +164,34 @@ watch (door.Status)
 
 </p>
 <p>
-	Now, your program will happily sit idle in the background, waiting for that door to open, and responding when it does. Congratulations! 
+	So now we've got all our code written. There's just one more thing to do: Run it!
+</p>
+<p>
+	On your button panel where you wrote the program, go into its actions and drag the BreakStep programmable block onto the button of your choice.
+	The action will be "Run", which should give you a popup asking for an argument. This is how we tell the script loader what to run.
+	The argument is just a program itself, so you could put an entire program on one line and run it that way. But there's a
+	special command, <code>run</code>, that will start a new script. It goes like this:<br>
+	<code>run "Button Panel 1";</code><br>
+	Note the quotes and semicolon. Theoretically, you could have the name of the block in a variable and <code>run MyBlockName;</code>, but
+	that's getting off topic. 99% of the time, you'll just tell it to run the button panel you're on.
+</p>
+
+<p>
+	So now, your program will happily sit idle in the background, waiting for that door to open, and responding when it does. Congratulations! 
 	Of course, in reality you'd probably have two doors, and the logic would be slightly more complicated, maybe with some sensors, but
-	now you know how to work with a block's properties so you can make it do anything! Have fun and get creative!
+	now you know how to work with a block's properties so you can make it do anything!
+</p>
+
+<p>
+	Now, there's one more trick: printing to an LCD Panel. If you want to actually print something, you'll need to set that up in the argument. Here's the command for that;<br>
+	<code>on LCD Panel 2: run "Button Panel 2";</code><br>
+	The LCD block does not go in quotes, but you need to put that colon <code>:</code> after it. Now if you print() from your script, it will go there.
+	You can also say <code>on LCD Panel: print(1+2+3);</code> or any one-line program. Anyway, I hope that's enough to get you started.
+</p>
+
+<p>
+	Programming is something that feels intimidating at first, but once you see something that you wrote in action, it will all be worth it.
+	Have fun out there, and get creative!
 </p>
 
 
