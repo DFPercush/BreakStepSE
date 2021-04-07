@@ -1,0 +1,3 @@
+<FilesMatch "\.(cs\.txt|json|)">
+Header set Cache-Control "max-age=0, public"
+</FilesMatch>
