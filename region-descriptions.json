@@ -1,0 +1,148 @@
+{
+"Visual Studio Setup": "Writing code in the game's edit box sucks, and a good IDE with auto complete is essential to modern programming. This component adds the magic glue to make Visual Studio recognize the game code. You will also need to manually add the .dlls from the Space Engineers folder as project references under Project,  Add Reference, Browse. You won't be able to run or debug an in-game script from there, but auto complete will help you learn more about scripting in Space Engineers. Turn this off when you actually paste it into the game.",
+
+"Geometry": "Bounding boxes, spheres, vectors and matrices. The size estimate may appear inflated because many blocks have functions that deal with vectors. Any blocks which use geometry and are not included will reduce that total. Likewise, vectors are not a hard dependency, you'll just be missing those functions if you leave this out.",
+
+"CubeGrid": "Provides access to the whole grid that a block is part of. Not needed for any properties you can see in the terminal.",
+
+"Components": "See what blocks are made of, and get access to info on the items it takes to create a block, (TODO: as well as any that have been damaged?)",
+
+"Inventory": "Provides access to the inventory(s) of blocks, yielding basic information like total mass, volume, and capacity. You can see how many slots are taken and if there is an item there, but not what it is. For that you need Inventory Items as well.",
+
+"Inventory Items": "Access a list of the actual items in an inventory, beyond simple summary information. Adds significant code size to your 100k limit.",
+
+"Doors": "Various door blocks, including Advanced Door and Airtight Hangar Door.",
+
+"Production Blocks": "Assemblers, Refineries, things that make stuff.",
+
+"Attachable Blocks": "Blocks like pistons and rotors, anything that creates a sub grid.",
+
+"Battery": "Battery blocks, to access charge level and mode.",
+
+"Beacon": "Beacon block",
+
+"Comms": "Gives you $\"IGC\", for Inter Grid Communications. System for broadcasting and receiving messages, to and from other grids, over antennae.",
+
+"Camera": "Camera block. See also: Raycasting.",
+
+"Cockpit": "Cockpits, seats, and space thrones. See also: Ship Controller",
+
+"Collector": "The thing that sucks up floating items and ores",
+
+"Conveyor": "Conveyor tubes and junctions, not much functionality",
+
+"Sorter": "Conveyor Sorter. Adds a whole system for inventory filters, not an insignificant chunk of code.",
+
+"Cryo Chamber": "Cryo Chambers and beds.",
+
+"Decoy": "Decoy block",
+
+"Piston": "Extendo!",
+
+"Gas Generator": "Things that produce gases.",
+
+"Gas Tank": "Things that store gases.",
+
+"Jump Drive": "Might as well.",
+
+"Turrets": "Spinny shooty things that track stuff. See also: Geometry, Entities",
+
+"Rotors": "You spin me right round, baby, right round.",
+
+"Wheel Suspension": "This controls everything important about wheels, except maybe hand brake, that's in Ship Controller.",
+
+"Lights": "Shine on you crazy diamond.",
+
+"Ore Detector": "I wonder what this does...",
+
+"Passage": "Passage block, as in a hallway. No meaningful functionality, but it's there, so it's here.",
+
+"Power Producers": "Blocks that generate power / charge, like solar panels, wind turbines, and reactors.",
+
+"Programmable Block": "Call other programs and pass arguments. Tip: You can watch() for things changing to synchronize your code.",
+
+"Projector": "Console and projector block for importing blueprints in survival.",
+
+"Antenna": "Includes radio and laser antenna. For Inter-grid communication, see Comms.",
+
+"Remote Control": "Ship auto pilot. See also: Ship Controller, Waypoints.",
+
+"Sensor": "Detects players, ships, subgrids, and asteroids within a designated area/volume. See also: Entities, if you want to know exactly what it detects.",
+
+"Connector": "Provides a structural dock and conveyor access between two grids.",
+
+"Ship Tools": "Vessel-mounted welders, grinders, and drills",
+
+"Guns": "Feuer Frei!",
+
+"Missiles": "... or are they rockets?",
+
+"Store Block": "Set up a shop to sell or request items. Requires Inventory Items, which is kinda hard on the space budget, ironically.",
+
+"Text": "LCD Panels and other displays.",
+
+"Thrust": "Not a block itself, but this type allows you to examine the thrust being produced by an engine. See also: Geometry, for direction.",
+
+"Upgrades": "Upgrade modules and the things they work on, like Refineries.",
+
+"Wheels": "You're probably looking for Wheel Suspension. There's not a lot here.",
+
+"Air Vent": "Pressurize / depressurize a sealed space, or extract atmospheric oxygen.",
+
+"Artificial Mass Block": "Control the amount of extra mass imparted to grids under the influence of gravity generators.",
+
+"Buttons": "*poke*",
+
+"Control Panel": "Provides terminal access at any location. They don't do a lot by themselves.",
+
+"Gravity Generator": "Creates customizable gravity in space. Muffin button not included.",
+
+"Gyro": "Provides torque to a ship. Can be player controlled or scripted to control the orientation of the craft.",
+
+"Landing Gear": "Provides a structural dock to any surface.",
+
+"Medical Room": "More useful for playing the game than scripting it.",
+
+"Oxygen Farm": "What are you growing in there exactly?",
+
+"Parachute": "Prevents rapid unscheduled disassembly.",
+
+"Safe Zone": "There's not a lot that in game scripts can do with these.",
+
+"Sound Blocks": "Sound block and Jukebox, for playing audio",
+
+"Entities": "Represents players, ships, subgrids, and any object that can detected by sensors, camera raycasting or other methods.",
+
+"print() to LCD": "Highly recommended for debugging. Enables the print() function to write to an LCD panel. Use the 'on' syntax in your programmable block argument to bind an LCD panel to the script. For example, on LCD Panel 2: run \"Button Panel 3\";'. Note that everything after the colon : is an actual program, and \"run\" is a keyword. You could put any single line program there. But 'on' is parsed by the Space Engineers glue code. That's why 'on' doesn't need quotes, but 'run' does. Anyway, all the text stuff takes a fair chunk of code size. Note that even without this, you still have a print() function no matter what. Without this, print() will go to the programmable block's output panel. You may not see it unless run directly from that P.B.'s terminal.",
+
+"Reactor": "Nuclear reactors that consume Uranium.",
+
+"Raycasting": "Enables the camera block to scan for objects in the world. See also: Entities",
+
+"Oxygen Tank": "Stores oxygen",
+
+"Waypoints": "Waypoints for remote control craft",
+
+"Ship Controller": "Super class of any block that can control a vessel, like cockpits and remote control blocks. Has info about direction and speed, orientation, player input, and generally anything that applies to a moving grid as a whole. Geometry is highly suggested.",
+
+"Cube Grid": "A class that provides info about a grid as a whole, not just the blocks that show up in the terminal.",
+
+"Merge Block": "Merges two grids into one when two of these blocks are aligned. Often very difficult to undo.",
+
+"Timer Block": "Set up actions to happen after a certain delay. Can also be triggered immediately from your script. It's a great way to provide a crude event system to players, where they can set up their own actions to happen when your script gives notice.",
+
+"Warhead": "Art is an explosion! Lots of fun, and definitely scriptable.",
+
+"Sprites": "TODO: Not implemented.",
+
+"Block/Item Definitions": "Some functions in the cube grid and item system require definitions for the type of block or item. This provides an object that you can pass to those. (implements conversion to and from the C# type SerializableDefinitionId)",
+
+"Cube Block Info": "Provides information about damage to blocks, integrity, build level, deformation, skin, and paint color. See also: Components, Geometry",
+
+"Vector Math": "Provides functions for length of a vector [vlen()], dotproduct(v), and crossproduct(v)",
+
+"Matrix Math":  "Provides functions for multiplying [mmul()], inverting [minv()], and dividing [mdiv()] matrices, multiplying them by vectors [mmul(matrix, vector)], orientation(matrix) which removes translation components, and performing translate, rotate, and scale operations. If you have a point in grid-local coordinates, you can get its position in world space by saying mmul( $\"Something\" .WorldMatrix, local_point); ",
+
+"": "Required code for the BSS interpreter and linkage to the Space Engineers grid terminal system. All blocks have some basic functionality that you can access without including them specifically, like custom name, show in terminal, etc, as well as GetValue, SetValue, and ApplyAction which can access everything you see in the terminal UI."
+
+}

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Scripting guide - BreakStep for Space Engineers</title>
+	<link rel="stylesheet" href="../css/app.css">
+	<style>
+		body {
+			/* line-height: 1.6em; */
+		}
+		body > div {
+			font-size: 1.25rem;
+			padding: 1rem;
+		}
+		code {
+			background-color: var(--se-hover-bg-color);
+			font-size: 1.5rem;
+			color: #FFF;
+		}
+		pre {
+			display: flex;
+		}
+		pre code {
+			padding: 1em;
+			border: var(--se-border);
+			flex-shrink: 1;
+		}
+		h1,h2,h3,h4,p {
+			padding-top: 1em;
+			padding-bottom: .5em;
+		}
+		li {
+			margin-top: .3em;
+		}
+	</style>
+</head>
+<body>
+<div>
+
+
+
+<h1 id="top">Quick guide to BreakStep for Space Engineers</h1>
+
+<ul>
+	<li><a href="#example-start">Learn by example</a></li>
+	<li><a href="#example-code">Example final code</a></li>
+	<li><a href="#bslang">The BreakStep Language</a></li>
+	<ul>
+		<li><a href="#adds-features">Added features</a></li>
+		<li><a href="#does-not-have">What it doesn't have</a></li>
+	</ul>
+	<li><a href="#syntax">Syntax crash course</a></li>
+	<ul>
+		<li><a href="#comments">Comments</a></li>
+		<li><a href="#loops">Loops</a></li>
+		<li><a href="#order">Order of declaration</a></li>
+		<li><a href="#operators">Operators</a></li>
+		<li><a href="#numbers">Numbers and booleans</a></li>
+		<li><a href="#references">References</a></li>
+		<li><a href="#objects-null">Objects and null</a></li>
+		<li><a href="#closures">Closures, lambdas, and callback functions</a></li>
+	</ul>
+	<li><a href="#functions">Built in functions</a></li>
+	<li><a href="#performance">Performance</a></li>
+	
+	
+	<!--	<li><a href=""></a></li> -->
+</ul>
+
+<a id="example-start"></a>
+
+
+<p>
+	Ok so, I started writing a technical paper about this new language, but let's cut to the chase - 
+	you're here because you want to write a simple little script to control something on your base or ship.
+	 Here's how you do it. Let's learn by example.
+</p>
+<p>Let's say we have a door that we want to monitor, and pressurize a room whenever it's activated. The first thing is to head back to the <a href="../">generator page</a> and select Door and Air Vent. Generate, copy, and paste into a programmable block. When you save and compile, you should see "Hello from init script!" in the programmable block's terminal. <a href="../report-issue/">No?</a> Now, you can start writing code.</p>
+<p>
+	Say we've named our door "Air Lock Door". So how do we check it?
+	Well, the first thing is, we need a way to refer to that thing in our code.
+	So we create a variable.
+</p>
+<code>var door;</code>
+<p>
+	This is programming 101, but it's an important step. This will be how we refer to that door.
+	But it's just an empty variable right now. We need it to point to our actual door.
+</p>
+<p>
+	And that's where the <code>$</code> operator comes in. <br/>
+	<code>$</code> means "system" and it's how we interact with space engineers.
+	Since this is an in-game script, that pretty much means the terminal system, i.e. the thing you see when you open a control panel.
+	Anything you put after the <code>$</code> will return the block with that name (or a block group, but that's a write-only object).
+	If you put a hard-coded name in quotes, like<br>
+	<code>$"Air Lock Door"</code>, that will get the door object.
+	Or, you could pass a variable, like <br>
+	<code>var x = "Air Lock Door"; $x.Status</code>..., 
+	maybe, if you want to have configurable block names or something.
+</p>
+<p>
+	So, after all that explanation, let's set our variable to be the actual door.
+</p>
+<code>door = $"Air Lock Door";</code>
+<p>
+	Note the semicolon <code>;</code> at the end. That's important. It marks the end of a statement, or "line" of code. Some languages use them, others don't. Since you may be typing programs on a single line into a programmable block's argument box, I decided to use them, rather than requiring one statement per line.
+</p>
+<p>
+	So, now our variable 'door' refers to the actual block named "Air Lock Door". We could open it if we want to...
+</p>
+<code>door.OpenDoor();</code>
+<p>
+	The period <code>.</code> means "look inside this object for what I type next." <code>OpenDoor</code> is a function of doors, and 
+	the parentheses <code>()</code> mean "do that function".<br>
+	...But anyway, we don't want to open the door. We want to watch for when its status changes.
+	Fortunately, door blocks give us a "Status" property.
+	We could run an infinite loop and use 100% of our cpu constantly checking it,
+	but here's where another feature of the BreakStep language comes in:
+	the <code>watch</code> keyword. This will let us take action whenever something changes.
+</p>
+<code>
+	watch (door.Status) { ... }
+</code>
+<p>Now, anything we put inside the <code>{ ... }</code> will run when the door's status changes. So let's move on to the air vent.
+	Looking at <a href="https://github.com/malware-dev/MDK-SE/wiki/Namespace-Index">this wonderful documentation</a> and searching for "airvent",
+	we see a property called "Depressurize". That looks like what we're after!
+	<br> Side note: All properties in Space Engineers start with a Capital Letter.
+</p>
+<code>$"Air Lock Vent".Depressurize = 1;</code>
+TODO: true/false are not keywords, just use 1 or 0.
+<p>
+	Of course, we don't always want to depressurize the room. We need to check if the door is open or closed.
+	In other words, if its Status equals "Closed". Note: The status could also be "Opening" or "Closing", but we want to see if it's fully closed.
+	Meaning the double equals <code>==</code> sign. A single <code>=</code> is a command, it assigns right to left. A double <code>==</code> is a question, yes or no, true or false, 1 or 0.
+</p>
+
+<a id="example-code"></a>
+<p>
+		So, putting it all together:
+</p>	
+<pre><code>var door = $"Air Lock Door";
+watch (door.Status)
+{
+	if (door.Status == "Closed")
+	{
+		$"Air Lock Vent".Depressurize = 0;
+	}
+	else
+	{
+		$"Air Lock Vent".Depressurize = 1;
+	}
+}
+</code></pre>
+<p>
+	You could also add an indicator light:<br>
+	<code>$"Door Light".Color = #00FF00;</code><br>
+	You can use HTML color codes for colors. For more see "Numbers" below.
+
+</p>
+<p>
+	Now, your program will happily sit idle in the background, waiting for that door to open, and responding when it does. Congratulations! 
+	Of course, in reality you'd probably have two doors, and the logic would be slightly more complicated, maybe with some sensors, but
+	now you know how to work with a block's properties so you can make it do anything! Have fun and get creative!
+</p>
+
+
+
+<h1 id="bslang">The BreakStep language</h1>
+
+<p>
+	BreakStep is an interpreted language that runs on top of a C# / .net environment. This choice was made for a very specific application where C# can be used to write plugins and scripts for the game Space Engineers. C# is also the native language of the Unity game engine, so more opportunities may present themselves over time.
+</p>
+<p>
+	So what is this new language? Basically, it's a weakly typed, c- or js-style syntax with a few key differences outlined below
+	You'll be typing lots of <code>()</code> and <code>{}</code> and <code>;</code> rather than saying
+	<code>then</code> or <code>do</code> or relying on tabs.
+</p>
+
+<h3 id="adds-features">The cool things it adds:</h3>
+<ul>
+	<li>Execution as a state machine. This is where the name comes from.
+		The parent system can run as many steps as it wants and break out whenever needed.
+		The cpu cycles can be spread out where available. The controlling process advances the clock.
+		This does come at a cost though, see Performance below.
+	</li>
+	<li><code>$</code> The system resolver operator. It's a shorthand for the most commonly used system call that takes one argument and returns 0 or 1 result. Being such a niche language for now, there is often a narrow scope of interest to the user, and this just makes life easier. I want my block. <code>$"My Block"</code>, bam. </li>
+	<li><code>wait x;</code> - pauses for x seconds. Decimals are ok. <code>x</code> can be any expression. </li>
+	<li><code>watch(expression) { code... }</code> - executes the code inside the <code>{}</code> braces whenever a value changes. *Note: This requires some implementation details to call a poll function or set up some kind of event system, but users don't have to worry about that.</li>
+	<li>functional expressions without <code>return</code> - e.g. <code>function square(x) { x*x }</code>. Some languages like Rust also do this, I'm aware. </li>
+</ul>
+
+<h3 id="does-not-have">What Breakstep doesn't have:</h3>
+<p>If you haven't done much coding before, you might not miss any of these, but I really can't say "just write javascript" and leave these out. So here's a few things you'll have to work around: </p>
+<ul>
+	<li> <code>++</code> and <code>--</code> - for complicated reasons, a postfix increment would require weird special cases and it's just more code... size is a premium here. I feel like I have to apologize for this, because even I have made the mistake of writing a <code>for</code> loop on autopilot and typing <code>i++</code> at the end out of habit. Maybe I'll add it later, if it doesn't take too much space. Just say <code>i+=1;</code> </li>
+	<li><code>switch / case</code> - You'll just have to get by with <code>if / else if / else</code></li>
+	<li>Ternary expressions <code>a ? b : c</code> , although you can put <code>if</code> statements inline anywhere. Just leave out the last semicolon to return an expression. <br/>
+		For example, <code>var x = if (y > 0) {y} else { doSomething(); 0 } </code>
+		... Note, the braces <code>{}</code> are required in this case, even for a simple expression like 'y'.<br/>
+		<code>need_braces = if (returning_a_value) { true } else do_your_thing(); not_part_of_if_block(); </code>
+
+	</li>
+	<li><code>()=>expression</code> syntax (but you can still define a function anywhere, including an argument list, so lambdas are possible)</li>
+	<li><code>[]</code> and <code>{}</code> initializers and inline JSON-style objects. Any variable can become an object or array by treating it as such, but you'll have to assign each member in its own statement. <br/>
+		<code>var car; car.speed = 80; car.color = "red"; ...</code></li>
+	<li><code>let</code> keyword, just use <code>var</code> to declare variables</li>
+	<li><code>const</code> keyword</li>
+	<li><code>await/async</code></li>
+	<li>Promises (unless someone writes a library; the interpreter doesn't know or care about the concept.)</li>
+	<li>Object-oriented features like <code>class</code>, <code>this</code>, and <code>self</code>. Although any variable can act as an object and hold member functions, it won't be able to refer to itself unless that's one of the parameters, like <code>cow.moo(cow);</code> <br>
+		I'd like to reserve <code>this</code> and <code>self</code> for future use, though, just in case. So try to avoid using them as variable names in your code.
+	</li>
+	<li>TODO: <code>try / catch</code></li>
+	<li>TODO: <code>import / export</code> But you do have <code>run "sourceName";</code> This could be used with some shared memory location or file (like watch(a random block's Custom Data){...} ) to pass arguments and results. </li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+<h1 id="syntax">Crash course on syntax</h1>
+<h3 id="comments">Comments</h3>
+... work like C-style languages:
+<pre><code>var x; // Two slashes make a comment
+
+/* This is also a comment */  var x = This_is_code();
+
+/* This is also a comment
+   on multiple lines */
+
+</code></pre>
+
+<h3 id="loops">Branching and loops</h3>
+
+<p>
+	<pre><code>if (condition)
+{
+  block_of_code();
+  multiple_statements();
+}
+else if (condition)
+  one_line();
+else
+{
+  0
+}
+</code></pre>
+</p>
+<p>
+	There's a space in <code>else if</code>. Parentheses around the condition are required.
+	The braces are not necessary if the block of code is only one statement, but it's good practice to always put them.
+	Braces are required if "returning" a value from the <code>if</code> block. To make any <code>{}</code> block evaluate to a particular value,
+	just omit the semicolon on the final statement.
+</p>
+
+<p>
+	<code>while (condition) { loop code }</code> Traditional C-style while loop.
+</p>
+<p>
+	<code>do { loop code } while (condition);</code><br>
+	<code>do {loop code } until (condition); </code><br>
+	Runs the loop code at least once, and checks condition after. <code>until (condition)</code> is the same as <code>while (!condition)</code>
+</p>
+
+<p>
+	<code>for (initial statement; condition; loop advance statement) { ... } </code><br>
+	C-style for loop. There is no support for <code>foreach/in/of</code>, although a <code>foreach</code> could theoretically
+	be written as a support function in BreakStep itself.
+</p>
+
+<h3 id="order">
+	Order of definition
+</h3>
+<p>
+	If a function is defined as "first class", meaning <code>function MyFunction() { ... }</code>, then it can be
+	called from anywhere in the scope, even from above where it's defined. If it's a variable, however:<br>
+	<code>var MyFunc = function() { ... }</code>, then it must have been previously declared above where it is called.
+</p>
+
+<pre><code>FirstClass();  // ok
+function FirstClass() {...}
+
+MyFunctionVar(); // error, variable not found
+var MyFunctionVar = function() {...}
+
+var SecondFunction;
+SecondFunction();  // No error, but won't do anything. 
+SecondFunction = function() { ... }
+</code></pre>
+<p>
+	In the last case, it will try to parse a function call when it sees the parentheses (), but since the variable has not been assigned a function yet,
+	it will just give up. This should probably be an error, but it should be considered undefined behavior for now.
+</p>
+
+<h3 id="operators">
+	Operators
+</h3>
+<ul>
+	<li>Most operators work the same as in C or Java/script, with the notable exception of xor.<br></li>
+	<li><code>^</code> does exponentiation (raise to a power)</li>
+	<li><code>+^</code> is the bitwise xor. <code>^^</code> is the logical or.<br></li>
+	<li>Arithmetic and bitwise operators can be combined with = to assign, but not boolean/logical operators.<br>
+	This includes <code> +=, *=, -=, /=, &=, |=, ^= (exponent) +^= (xor), &lt;&lt;= (shift left), and &gt;&gt;= (shift right)  </code></li>
+	<li>The words <code>and</code>, <code>or</code>, <code>not</code>, and <code>xor</code> are also logical boolean operators.</li>
+	<li><code>@variable and @=</code> Creates a reference to a variable instead of copying by value. </li>
+</ul>
+<h3 id="numbers">Numbers</h3>
+<p>
+	Numbers are usually represented internally as doubles, i.e. 64-bit floating point values. In certain cases, if the parser detects
+	a value &gt;= 2^52 and &lt;=2^64, and the token does not contain a decimal point,
+	it will re-parse the value as a 64-bit integer. Any C# code that assigns a 'long' type to a Var object
+	will invoke the long integer storage mechanism.
+</p>
+<p>
+	Boolean values are just numbers. 0 is false, anything else is true. Any boolean operator results in 1 or 0.
+</p>
+<p>
+	HTML color codes can be annotated with <code>#</code> in either the 3-digit or 6-digit form.
+	The internal byte order will be reversed when you do this, so they should only be used for actual colors.
+</p>
+<p>
+	Other hex values can be written as 0x1FC3...
+</p>
+
+<h3 id="references">References</h3>
+<p>
+	
+	When you say <code>a = b;</code>, b is value copied to a. For objects and arrays, this means an element-wise copy
+	of every value. If you want to pass the actual object, use <code>@</code>. <br>
+	<code>var a @= b;</code> Now <code>a</code> will reflect changes to <code>b</code> and vice versa.<br>
+	You can also say <code>a = @b;</code>
+
+</p>
+<p>
+	Note: Certain system objects are always carried as references. For example: <br>
+	<code>var light = $"Internal Light";</code> The <code>light</code> variable will now
+	represent that system object. Assigning
+	to <code>light.Color</code> will affect the light. However,<br>
+	<code>var color = light.Color; color = #FFF;</code> In this case, <code>color</code> will
+	not affect the original object. It will if you use the <code>@=</code> or <code>@</code> operator, though.
+</p>
+<pre><code>var color @= $"Internal Light".Color;
+color = #FFF;
+</code></pre>
+or...
+<pre><code>var color = @$"Internal Light".Color
+color = #F0F0F0;
+</code></pre>
+
+
+<h3 id="objects-null">Objects and null</h3>
+Consider the following example:<br>
+<code>var x; x.a.b = 42;</code><br>
+In most languages, this would throw a null reference exception.
+Here, though, a write operation will create every object along the chain.
+So then, <code>x.a</code> would print as <code>Object[1]</code> and <code>keys(x.a)</code> would return "b".
+Keys that don't exist do evaluate internally to null values, but writing to it creates it.
+
+<h3 id="closures">Closures, lambdas, and callbacks</h3>
+<pre><code>for (var i = 0; i < 10; i += 1)
+  {
+    var x = i; // Make a separate copy of i
+    someProcess(function() { println(x); });
+  }
+</code></pre>
+<p>
+	There are currently no system calls that accept callbacks, but you may find a use for them in your own code.
+	In this case, we pass <code>someProcess()</code> a function, to be called later. Any variables that are
+	in scope at the time that function is defined, will be accessible from inside it. But be careful with loops,
+	because if you just refer to <code>i</code>, it may have already reached the end of the loop and be 10
+	every time. That's why we store a copy in a new <code>var x</code> that creates a new variable (and a new scope)
+	every time through the loop.
+</p>
+
+<h1 id="functions">Built in functions</h1>
+<ul>
+	<li><code>len(array/string)</code> returns the length of a string, or the number of elements in an array</li>
+	<li><code>keys(object)</code> returns an array of all the named members / keys in a var.</li>
+	<li><code>keycount(object)</code> returns the number of keys in an object.</li>
+	<li><code>str()</code> converts values to string, although they kind of do that automatically in many cases</li>
+	<li><code>chr(number)</code> returns the character at a given code point as a string. Example, <code>chr(65) == 'A'</code> </li>
+	<li><code>codepoint(string)</code> returns the numerical code point of (the first character of) a string</li>
+	<li><code>round(number, digits)</code> rounds to the nearest however many digits</li>
+	<li><code>floor(number) and ceil(number)</code> floor and ceiling, round to the next integer</li>
+	<li><code>substr(string, start, length)</code> returns [length] characters from [string] starting at [start]</li>
+	<li><code>find(haystack_string, needle_string)</code> finds needle in haystack, returns 0-based position</li>
+	<li><code>sqrt(x)</code> returns the square root of x</li>
+	<li><code>log(x)</code> natural logarithm. To get the base-n log, use <code>log(x) / log(n)</code> </li>
+	<li><code>sin, cos, tan, asin, acos, atan, sinh, cosh, tanh</code> Trig functions</li>
+	<li>* Most implementations should have a <code>print()</code> function, but that's a system call, not a language feature. It should return the output string.</li>
+</ul>
+
+
+<h1 id="performance">Performance</h1>
+<p>
+	Let's put it this way. I wouldn't suggest mining bitcoin with it. The philosophy here is to trade overall performance for cpu load granularity
+	and ease of use. There's a lot of overhead for each instruction, although it's not really instructions you're dealing
+	with in this language, it's tokens. Some tokens do more than others. The idea is that it might not finish as quickly as other more 
+	optimized languages, but you can suspend it and do other stuff whenever you need to. And by you, I mean the system that's running the
+	interpreter. In other words, the priority is to make it throttleable.
+</p>
+<p>
+	There's one other glaring issue that bears pointing out. Variables are <strong>thicc</strong>.
+	The fact that C# doesn't have unions is a big part of that. Another is that I don't want to make 10 derived classes because 
+	source code size actually matters.
+	This language is meant for every day people to do simple high level logic and call down to lower level APIs,
+	it's not supposed to be powering a complex system that processes a lot of data.
+</p>
+
+
+</div>
+</body>
+</html>
